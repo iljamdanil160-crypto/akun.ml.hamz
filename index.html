@@ -134,10 +134,8 @@
       gap: 8px;
     }
 
-    /* Form tambah/edit */
     .form-card { margin-bottom: 20px; }
 
-    /* Daftar akun */
     .account-list { display: flex; flex-direction: column; gap: 12px; }
 
     .account-card {
@@ -154,7 +152,15 @@
       margin-bottom: 12px;
     }
 
-    .account-nickname { color: #00d2ff; font-weight: 700; font-size: 18px; }
+    .account-nickname { 
+      color: #00d2ff; 
+      font-weight: 700; 
+      font-size: 18px; 
+    }
+    .account-nickname .order { 
+      color: #ffaa00; 
+      margin-right: 4px; 
+    }
 
     .account-actions { display: flex; gap: 8px; }
     .icon-btn {
@@ -492,7 +498,8 @@
       }
 
       let html = '<div class="account-list">';
-      accounts.forEach(acc => {
+      accounts.forEach((acc, index) => {
+        const order = index + 1;
         const safeEmail = (acc.email || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
         const safePass = (acc.password || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
         const safeDevice = (acc.deviceId || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
@@ -501,7 +508,7 @@
         html += `
           <div class="account-card">
             <div class="account-header">
-              <span class="account-nickname">${acc.nickname || 'Tanpa Nick'}</span>
+              <span class="account-nickname"><span class="order">#${order}</span> ${acc.nickname || 'Tanpa Nick'}</span>
               <div class="account-actions">
                 <button class="icon-btn" onclick="editAccount('${acc.id}')">✏️</button>
                 <button class="icon-btn btn-danger" onclick="deleteAccount('${acc.id}')">🗑️</button>
