@@ -34,7 +34,6 @@
       to { opacity: 1; transform: translateY(0); }
     }
 
-    /* Glass card */
     .glass {
       background: rgba(255, 255, 255, 0.05);
       backdrop-filter: blur(16px);
@@ -67,7 +66,6 @@
       display: none !important;
     }
 
-    /* Form inputs */
     .input-group {
       margin-bottom: 12px;
     }
@@ -95,7 +93,6 @@
       background: rgba(255, 255, 255, 0.08);
     }
 
-    /* Buttons */
     .btn {
       width: 100%;
       padding: 14px;
@@ -150,7 +147,6 @@
       color: #a18cd1;
     }
 
-    /* Logout */
     .logout-row {
       display: flex;
       justify-content: flex-end;
@@ -188,7 +184,7 @@
       font-weight: 700;
     }
 
-    /* Data rows */
+    /* Data item grid */
     .data-list {
       display: flex;
       flex-direction: column;
@@ -196,51 +192,84 @@
     }
 
     .data-item {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: flex-start;
+      display: grid;
+      grid-template-columns: 100px 1fr auto;
+      align-items: center;
       gap: 10px;
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 14px;
-      padding: 14px 16px;
+      padding: 12px 16px;
     }
 
     .data-label {
       font-weight: 600;
       color: #aaa;
-      min-width: 100px;
-      font-size: 14px;
+      font-size: 13px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
+      white-space: nowrap;
     }
 
     .data-value {
-      flex: 1;
       color: #eee;
       word-break: break-all;
       overflow-wrap: anywhere;
-      line-height: 1.5;
+      line-height: 1.4;
       font-size: 15px;
+      min-width: 0; /* agar bisa mengecil */
+    }
+
+    .data-value input {
+      background: transparent;
+      border: none;
+      color: #eee;
+      font-size: 15px;
+      padding: 0;
+      width: 100%;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      justify-self: end;
+    }
+
+    .copy-btn, .toggle-btn {
+      border: none;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
     }
 
     .copy-btn {
       background: linear-gradient(135deg, #ffd700, #ffaa00);
       color: #1a1a2e;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 20px;
       font-weight: 700;
-      font-size: 13px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      white-space: nowrap;
-      align-self: center;
     }
 
     .copy-btn:hover {
       transform: scale(1.05);
       box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    }
+
+    .toggle-btn {
+      background: rgba(255,255,255,0.15);
+      padding: 6px 10px;
+      font-size: 16px;
+      line-height: 1;
+      color: #fff;
+    }
+
+    .toggle-btn:hover {
+      background: rgba(255,255,255,0.25);
     }
 
     pre {
@@ -269,6 +298,18 @@
       text-align: center;
       padding: 20px;
     }
+
+    /* Responsive untuk layar kecil */
+    @media (max-width: 400px) {
+      .data-item {
+        grid-template-columns: 80px 1fr;
+      }
+      .action-btns {
+        grid-column: 2;
+        justify-self: start;
+        margin-top: 4px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -279,7 +320,6 @@
         <h2>🔐 ML Manager</h2>
         <p class="subtitle">Simpan akun Mobile Legends dengan aman</p>
 
-        <!-- Login Form -->
         <div id="loginForm">
           <div class="input-group">
             <input type="text" id="loginUser" placeholder="Username" autocomplete="username" />
@@ -291,7 +331,6 @@
           <p class="link-text">Belum punya akun? <span class="link" onclick="showRegister()">Daftar di sini</span></p>
         </div>
 
-        <!-- Register Form -->
         <div id="registerForm" class="hidden">
           <div class="input-group">
             <input type="text" id="regUser" placeholder="Username" autocomplete="username" />
@@ -315,7 +354,6 @@
         <h2>📊 Data Akun ML</h2>
         <p class="welcome">Selamat datang, <span id="welcomeName"></span>!</p>
 
-        <!-- Input Data ML -->
         <div class="section-title">➕ Tambah / Edit Data</div>
         <div class="input-group">
           <input type="text" id="mlEmail" placeholder="📧 Email ML" />
@@ -439,6 +477,33 @@
       loadMLData();
     }
 
+    function copyText(text, label) {
+      if (!text) return alert(label + ' kosong.');
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => alert('✅ ' + label + ' disalin!'));
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+        alert('✅ ' + label + ' disalin!');
+      }
+    }
+
+    window.togglePassword = function(id, iconId) {
+      const el = document.getElementById(id);
+      const icon = document.getElementById(iconId);
+      if (el.type === 'password') {
+        el.type = 'text';
+        if (icon) icon.textContent = '🙈';
+      } else {
+        el.type = 'password';
+        if (icon) icon.textContent = '👁️';
+      }
+    };
+
     function loadMLData() {
       const mlData = getMLData();
       const display = document.getElementById('mlDataDisplay');
@@ -450,27 +515,46 @@
         return;
       }
 
-      const escapeJS = (str) => str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-      const safeDevice = escapeJS(mlData.deviceId || '');
+      const escapeJS = (str) => (str || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+      const safeEmail = escapeJS(mlData.email);
+      const safePass = escapeJS(mlData.password);
+      const safeDevice = escapeJS(mlData.deviceId);
+      const safeNick = escapeJS(mlData.nickname);
+
+      const passFieldId = 'passField_' + Date.now();
 
       display.innerHTML = `
         <div class="data-list">
           <div class="data-item">
             <span class="data-label">📧 Email</span>
             <span class="data-value">${mlData.email || '-'}</span>
+            <div class="action-btns">
+              <button class="copy-btn" onclick="copyText('${safeEmail}', 'Email')">📋</button>
+            </div>
           </div>
           <div class="data-item">
             <span class="data-label">🔑 Password</span>
-            <span class="data-value">${mlData.password || '-'}</span>
+            <div class="data-value">
+              <input type="password" value="${mlData.password || ''}" id="${passFieldId}" readonly />
+            </div>
+            <div class="action-btns">
+              <button class="toggle-btn" onclick="togglePassword('${passFieldId}', 'icon_${passFieldId}')" id="icon_${passFieldId}">👁️</button>
+              <button class="copy-btn" onclick="copyText('${safePass}', 'Password')">📋</button>
+            </div>
           </div>
           <div class="data-item">
             <span class="data-label">🆔 Device ID</span>
             <span class="data-value">${mlData.deviceId || '-'}</span>
-            <button class="copy-btn" onclick="copyDeviceId('${safeDevice}')">📋 Salin</button>
+            <div class="action-btns">
+              <button class="copy-btn" onclick="copyText('${safeDevice}', 'Device ID')">📋</button>
+            </div>
           </div>
           <div class="data-item">
             <span class="data-label">👤 Nickname</span>
             <span class="data-value">${mlData.nickname || '-'}</span>
+            <div class="action-btns">
+              <button class="copy-btn" onclick="copyText('${safeNick}', 'Nickname')">📋</button>
+            </div>
           </div>
         </div>
       `;
@@ -478,36 +562,10 @@
       exportPre.textContent = JSON.stringify(mlData, null, 2);
     }
 
-    function copyDeviceId(text) {
-      if (!text) return alert('Device ID kosong.');
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(text).then(() => alert('✅ Device ID disalin!'));
-      } else {
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        alert('✅ Device ID disalin!');
-      }
-    }
-
     function exportData() {
       const mlData = getMLData();
       if (!mlData) return alert('Tidak ada data.');
-      const json = JSON.stringify(mlData, null, 2);
-      if (navigator.clipboard) {
-        navigator.clipboard.writeText(json).then(() => alert('📋 JSON tersalin!'));
-      } else {
-        const ta = document.createElement('textarea');
-        ta.value = json;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        alert('📋 JSON tersalin!');
-      }
+      copyText(JSON.stringify(mlData, null, 2), 'JSON');
     }
 
     window.onload = function() {
