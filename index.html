@@ -16,6 +16,7 @@
     .hidden { display: none; }
     .data-row { display: flex; justify-content: space-between; align-items: center; margin: 10px 0; padding: 10px; background: #0f3460; border-radius: 8px; }
     .data-row span { word-break: break-all; }
+    .copy-btn { background: #00d2ff; color: #1a1a2e; border: none; padding: 5px 12px; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 14px; margin-left: 10px; white-space: nowrap; }
     .logout { text-align: right; }
     a { color: #e94560; text-decoration: none; font-weight: bold; cursor: pointer; }
     pre { background: #0f3460; padding: 10px; border-radius: 8px; overflow-x: auto; }
@@ -53,7 +54,6 @@
       <input type="text" id="mlPassword" placeholder="Password ML" />
       <input type="text" id="mlDevice" placeholder="Device ID" />
       <input type="text" id="mlNick" placeholder="Nickname" />
-      <input type="text" id="mlServer" placeholder="Server (contoh: 12345 (1234))" />
       <button onclick="saveMLData()">💾 Simpan Data ML</button>
     </div>
 
@@ -71,10 +71,9 @@
 
   <script>
     // ---------- FUNGSI DASAR ----------
-    const MASTER_KEY = "ml_manager_users"; // penyimpanan user
-    const SESSION_KEY = "ml_current_session"; // user yang login
+    const MASTER_KEY = "ml_manager_users";
+    const SESSION_KEY = "ml_current_session";
 
-    // Ambil database user dari localStorage
     function getUsers() {
       return JSON.parse(localStorage.getItem(MASTER_KEY)) || {};
     }
@@ -83,7 +82,6 @@
       localStorage.setItem(MASTER_KEY, JSON.stringify(users));
     }
 
-    // Simulasi hashing sederhana (jangan dipakai production!)
     function simpleHash(str) {
       let hash = 0;
       for (let i = 0; i < str.length; i++) {
@@ -115,7 +113,7 @@
 
       users[username] = {
         passwordHash: simpleHash(password),
-        mlData: null // nanti diisi setelah login
+        mlData: null
       };
       saveUsers(users);
       alert('Registrasi berhasil! Silakan login.');
@@ -133,11 +131,10 @@
         return alert('Username atau password salah!');
       }
 
-      // Simpan sesi login
       localStorage.setItem(SESSION_KEY, username);
       document.getElementById('authPage').classList.add('hidden');
       document.getElementById('dashboard').classList.remove('hidden');
-      loadMLData(); // tampilkan data ML jika ada
+      loadMLData();
     }
 
     function logout() {
@@ -166,15 +163,14 @@
         email: document.getElementById('mlEmail').value.trim(),
         password: document.getElementById('mlPassword').value.trim(),
         deviceId: document.getElementById('mlDevice').value.trim(),
-        nickname: document.getElementById('mlNick').value.trim(),
-        server: document.getElementById('mlServer').value.trim()
+        nickname: document.getElementById('mlNick').value.trim()
       };
 
       const users = getUsers();
       users[username].mlData = mlData;
       saveUsers(users);
       alert('Data ML berhasil disimpan!');
-      loadMLData(); // refresh tampilan
+      loadMLData();
     }
 
     function loadMLData() {
@@ -188,13 +184,34 @@
         return;
       }
 
-      // Tampilkan di card
+      // Fungsi copy helper
+      function copyText(text) {
+        navigator.clipboard.writeText(text).then(() => {
+          alert('Device ID berhasil disalin!');
+        }).catch(() => {
+          // Fallback untuk browser lama
+          const textarea = document.createElement('textarea');
+          textarea.value = text;
+          document.body.appendChild(textarea);
+          textarea.select();
+          document.execCommand('copy');
+          document.body.removeChild(textarea);
+          alert('Device ID berhasil disalin!');
+        });
+      }
+
+      // Tampilkan data dengan tombol salin di device ID
       displayDiv.innerHTML = `
         <div class="data-row"><span>📧 Email</span> <span>${mlData.email || '-'}</span></div>
         <div class="data-row"><span>🔑 Password</span> <span>${mlData.password || '-'}</span></div>
-        <div class="data-row"><span>🆔 Device ID</span> <span>${mlData.deviceId || '-'}</span></div>
+        <div class="data-row">
+          <span>🆔 Device ID</span>
+          <div style="display: flex; align-items: center;">
+            <span>${mlData.deviceId || '-'}</span>
+            <button class="copy-btn" onclick="event.stopPropagation(); navigator.clipboard.writeText('${mlData.deviceId.replace(/'/g, "\\'")}').then(()=>alert('Device ID disalin!'))">📋 Salin</button>
+          </div>
+        </div>
         <div class="data-row"><span>👤 Nickname</span> <span>${mlData.nickname || '-'}</span></div>
-        <div class="data-row"><span>🌐 Server</span> <span>${mlData.server || '-'}</span></div>
       `;
 
       // JSON export
