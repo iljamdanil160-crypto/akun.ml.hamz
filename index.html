@@ -7,11 +7,7 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
     
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
@@ -55,20 +51,9 @@
       margin-bottom: 6px;
     }
 
-    .subtitle {
-      text-align: center;
-      color: #888;
-      font-size: 14px;
-      margin-bottom: 24px;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .input-group {
-      margin-bottom: 12px;
-    }
+    .subtitle { text-align: center; color: #888; font-size: 14px; margin-bottom: 24px; }
+    .hidden { display: none !important; }
+    .input-group { margin-bottom: 12px; }
 
     input {
       width: 100%;
@@ -83,14 +68,11 @@
       outline: none;
     }
 
-    input::placeholder {
-      color: rgba(255, 255, 255, 0.35);
-    }
-
+    input::placeholder { color: rgba(255,255,255,0.35); }
     input:focus {
       border-color: #00d2ff;
-      box-shadow: 0 0 0 4px rgba(0, 210, 255, 0.1);
-      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 4px rgba(0,210,255,0.1);
+      background: rgba(255,255,255,0.08);
     }
 
     .btn {
@@ -110,52 +92,23 @@
     .btn-primary {
       background: linear-gradient(135deg, #00d2ff, #3a7bd5);
       color: #fff;
-      box-shadow: 0 6px 20px rgba(0, 210, 255, 0.25);
+      box-shadow: 0 6px 20px rgba(0,210,255,0.25);
     }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,210,255,0.4); }
+    .btn-secondary { background: rgba(255,255,255,0.08); color: #fff; border: 1px solid rgba(255,255,255,0.2); }
+    .btn-secondary:hover { background: rgba(255,255,255,0.12); }
+    .btn-danger { background: #e94560; }
+    .btn-danger:hover { background: #ff6b7a; }
 
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 28px rgba(0, 210, 255, 0.4);
-    }
+    .link-text { text-align: center; color: #aaa; font-size: 14px; margin-top: 16px; }
+    .link { color: #00d2ff; text-decoration: none; font-weight: 600; cursor: pointer; }
+    .link:hover { color: #a18cd1; }
 
-    .btn-secondary {
-      background: rgba(255, 255, 255, 0.08);
-      color: #fff;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-
-    .btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.12);
-    }
-
-    .link-text {
-      text-align: center;
-      color: #aaa;
-      font-size: 14px;
-      margin-top: 16px;
-    }
-
-    .link {
-      color: #00d2ff;
-      text-decoration: none;
-      font-weight: 600;
-      cursor: pointer;
-      transition: color 0.2s;
-    }
-
-    .link:hover {
-      color: #a18cd1;
-    }
-
-    .logout-row {
-      display: flex;
-      justify-content: flex-end;
-      margin-bottom: 10px;
-    }
+    .logout-row { display: flex; justify-content: flex-end; margin-bottom: 10px; }
 
     .logout-btn {
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
       color: #fff;
       padding: 8px 18px;
       border-radius: 24px;
@@ -166,121 +119,10 @@
       align-items: center;
       gap: 6px;
     }
+    .logout-btn:hover { background: rgba(255,80,80,0.2); border-color: rgba(255,80,80,0.4); }
 
-    .logout-btn:hover {
-      background: rgba(255, 80, 80, 0.2);
-      border-color: rgba(255, 80, 80, 0.4);
-    }
-
-    .welcome {
-      text-align: center;
-      color: #ccc;
-      margin-bottom: 20px;
-      font-size: 15px;
-    }
-
-    .welcome span {
-      color: #00d2ff;
-      font-weight: 700;
-    }
-
-    /* Data item grid */
-    .data-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .data-item {
-      display: grid;
-      grid-template-columns: 100px 1fr auto;
-      align-items: center;
-      gap: 10px;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 14px;
-      padding: 12px 16px;
-    }
-
-    .data-label {
-      font-weight: 600;
-      color: #aaa;
-      font-size: 13px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      white-space: nowrap;
-    }
-
-    .data-value {
-      color: #eee;
-      word-break: break-all;
-      overflow-wrap: anywhere;
-      line-height: 1.4;
-      font-size: 15px;
-      min-width: 0; /* agar bisa mengecil */
-    }
-
-    .data-value input {
-      background: transparent;
-      border: none;
-      color: #eee;
-      font-size: 15px;
-      padding: 0;
-      width: 100%;
-      outline: none;
-      font-family: inherit;
-    }
-
-    .action-btns {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-      justify-self: end;
-    }
-
-    .copy-btn, .toggle-btn {
-      border: none;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      white-space: nowrap;
-    }
-
-    .copy-btn {
-      background: linear-gradient(135deg, #ffd700, #ffaa00);
-      color: #1a1a2e;
-      font-weight: 700;
-    }
-
-    .copy-btn:hover {
-      transform: scale(1.05);
-      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
-    }
-
-    .toggle-btn {
-      background: rgba(255,255,255,0.15);
-      padding: 6px 10px;
-      font-size: 16px;
-      line-height: 1;
-      color: #fff;
-    }
-
-    .toggle-btn:hover {
-      background: rgba(255,255,255,0.25);
-    }
-
-    pre {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 16px;
-      border-radius: 14px;
-      color: #0f0;
-      font-size: 13px;
-      overflow-x: auto;
-      margin-bottom: 12px;
-    }
+    .welcome { text-align: center; color: #ccc; margin-bottom: 20px; font-size: 15px; }
+    .welcome span { color: #00d2ff; font-weight: 700; }
 
     .section-title {
       font-size: 16px;
@@ -292,24 +134,95 @@
       gap: 8px;
     }
 
-    .no-data {
-      color: #666;
-      font-style: italic;
-      text-align: center;
-      padding: 20px;
+    /* Form tambah/edit */
+    .form-card { margin-bottom: 20px; }
+
+    /* Daftar akun */
+    .account-list { display: flex; flex-direction: column; gap: 12px; }
+
+    .account-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 16px;
     }
 
-    /* Responsive untuk layar kecil */
-    @media (max-width: 400px) {
-      .data-item {
-        grid-template-columns: 80px 1fr;
-      }
-      .action-btns {
-        grid-column: 2;
-        justify-self: start;
-        margin-top: 4px;
-      }
+    .account-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
     }
+
+    .account-nickname { color: #00d2ff; font-weight: 700; font-size: 18px; }
+
+    .account-actions { display: flex; gap: 8px; }
+    .icon-btn {
+      background: rgba(255,255,255,0.1);
+      border: none;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .icon-btn:hover { background: rgba(255,255,255,0.2); }
+
+    .data-grid {
+      display: grid;
+      grid-template-columns: 80px 1fr auto;
+      align-items: center;
+      gap: 8px 12px;
+      margin-bottom: 8px;
+    }
+
+    .data-label {
+      font-weight: 600;
+      color: #aaa;
+      font-size: 12px;
+      text-transform: uppercase;
+    }
+
+    .data-value {
+      color: #eee;
+      word-break: break-all;
+      font-size: 14px;
+    }
+
+    .action-btns {
+      display: flex;
+      gap: 6px;
+    }
+
+    .copy-btn, .toggle-btn {
+      border: none;
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .copy-btn { background: linear-gradient(135deg, #ffd700, #ffaa00); color: #1a1a2e; font-weight: 700; }
+    .copy-btn:hover { transform: scale(1.05); box-shadow: 0 4px 15px rgba(255,215,0,0.4); }
+
+    .toggle-btn { background: rgba(255,255,255,0.15); color: #fff; }
+    .toggle-btn:hover { background: rgba(255,255,255,0.25); }
+
+    .no-data { color: #666; font-style: italic; text-align: center; padding: 20px; }
+
+    pre {
+      background: rgba(0,0,0,0.3);
+      padding: 16px;
+      border-radius: 14px;
+      color: #0f0;
+      font-size: 13px;
+      overflow-x: auto;
+      margin-bottom: 12px;
+    }
+
+    .btn-group { display: flex; gap: 10px; }
   </style>
 </head>
 <body>
@@ -318,7 +231,7 @@
     <div id="authPage">
       <div class="glass">
         <h2>🔐 ML Manager</h2>
-        <p class="subtitle">Simpan akun Mobile Legends dengan aman</p>
+        <p class="subtitle">Simpan banyak akun Mobile Legends dengan aman</p>
 
         <div id="loginForm">
           <div class="input-group">
@@ -351,35 +264,44 @@
       </div>
 
       <div class="glass">
-        <h2>📊 Data Akun ML</h2>
+        <h2>📊 Akun ML Saya</h2>
         <p class="welcome">Selamat datang, <span id="welcomeName"></span>!</p>
 
-        <div class="section-title">➕ Tambah / Edit Data</div>
-        <div class="input-group">
-          <input type="text" id="mlEmail" placeholder="📧 Email ML" />
+        <button class="btn btn-primary" onclick="showAddForm()">➕ Tambah Akun Baru</button>
+
+        <!-- Form tambah/edit (tersembunyi default) -->
+        <div id="editForm" class="form-card hidden">
+          <div class="section-title" id="formTitle">Tambah Akun</div>
+          <input type="hidden" id="editId" />
+          <div class="input-group">
+            <input type="text" id="mlEmail" placeholder="📧 Email ML" />
+          </div>
+          <div class="input-group">
+            <input type="password" id="mlPassword" placeholder="🔑 Password ML" />
+          </div>
+          <div class="input-group">
+            <input type="text" id="mlDevice" placeholder="🆔 Device ID" />
+          </div>
+          <div class="input-group">
+            <input type="text" id="mlNick" placeholder="👤 Nickname" />
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" onclick="saveAccount()">💾 Simpan</button>
+            <button class="btn btn-secondary" onclick="cancelEdit()">Batal</button>
+          </div>
         </div>
-        <div class="input-group">
-          <input type="password" id="mlPassword" placeholder="🔑 Password ML" />
-        </div>
-        <div class="input-group">
-          <input type="text" id="mlDevice" placeholder="🆔 Device ID" />
-        </div>
-        <div class="input-group">
-          <input type="text" id="mlNick" placeholder="👤 Nickname" />
-        </div>
-        <button class="btn btn-primary" onclick="saveMLData()">💾 Simpan Data</button>
       </div>
 
-      <!-- Data Tersimpan -->
-      <div class="glass" id="savedDataCard">
-        <div class="section-title">📋 Data Tersimpan</div>
-        <div id="mlDataDisplay"><p class="no-data">Belum ada data.</p></div>
-      </div>
-
-      <!-- Ekspor -->
+      <!-- Daftar akun -->
       <div class="glass">
-        <div class="section-title">📤 Ekspor JSON</div>
-        <pre id="exportJson">{}</pre>
+        <div class="section-title">📋 Daftar Akun</div>
+        <div id="accountList"><p class="no-data">Belum ada akun.</p></div>
+      </div>
+
+      <!-- Ekspor JSON -->
+      <div class="glass">
+        <div class="section-title">📤 Ekspor Semua Akun (JSON)</div>
+        <pre id="exportJson"></pre>
         <button class="btn btn-secondary" onclick="exportData()">📋 Salin JSON</button>
       </div>
     </div>
@@ -389,21 +311,12 @@
     const STORAGE_USERS = 'ml_users_db';
     const STORAGE_SESSION = 'ml_current_user';
 
-    function getUsers() {
-      return JSON.parse(localStorage.getItem(STORAGE_USERS)) || {};
-    }
-    function saveUsers(users) {
-      localStorage.setItem(STORAGE_USERS, JSON.stringify(users));
-    }
-    function hash(str) {
-      let h = 0;
-      for (let i = 0; i < str.length; i++) {
-        h = ((h << 5) - h) + str.charCodeAt(i);
-        h |= 0;
-      }
-      return h.toString(16);
-    }
+    // ========== STORAGE ==========
+    function getUsers() { return JSON.parse(localStorage.getItem(STORAGE_USERS)) || {}; }
+    function saveUsers(users) { localStorage.setItem(STORAGE_USERS, JSON.stringify(users)); }
+    function hash(str) { let h = 0; for (let i = 0; i < str.length; i++) { h = ((h << 5) - h) + str.charCodeAt(i); h |= 0; } return h.toString(16); }
 
+    // ========== AUTH UI ==========
     function showRegister() {
       document.getElementById('loginForm').classList.add('hidden');
       document.getElementById('registerForm').classList.remove('hidden');
@@ -419,7 +332,7 @@
       if (!u || !p) return alert('Isi username & password!');
       const users = getUsers();
       if (users[u]) return alert('Username sudah dipakai!');
-      users[u] = { passHash: hash(p), mlData: null };
+      users[u] = { passHash: hash(p), accounts: [] }; // array kosong
       saveUsers(users);
       alert('Berhasil daftar! Silakan login.');
       showLogin();
@@ -442,41 +355,99 @@
       document.getElementById('authPage').classList.remove('hidden');
     }
 
-    function getCurrentUser() {
-      return localStorage.getItem(STORAGE_SESSION);
-    }
+    function getCurrentUser() { return localStorage.getItem(STORAGE_SESSION); }
 
+    // ========== DASHBOARD ==========
     function showDashboard() {
       const u = getCurrentUser();
       document.getElementById('authPage').classList.add('hidden');
       document.getElementById('dashboard').classList.remove('hidden');
       document.getElementById('welcomeName').textContent = u;
-      loadMLData();
+      document.getElementById('editForm').classList.add('hidden');
+      renderAccounts();
     }
 
-    function getMLData() {
+    function getAccounts() {
       const u = getCurrentUser();
-      if (!u) return null;
+      if (!u) return [];
       const users = getUsers();
-      return users[u]?.mlData || null;
+      return users[u]?.accounts || [];
     }
 
-    function saveMLData() {
+    function saveAccounts(accounts) {
       const u = getCurrentUser();
-      if (!u) return alert('Session habis, login ulang.');
-      const mlData = {
-        email: document.getElementById('mlEmail').value.trim(),
-        password: document.getElementById('mlPassword').value.trim(),
-        deviceId: document.getElementById('mlDevice').value.trim(),
-        nickname: document.getElementById('mlNick').value.trim()
-      };
+      if (!u) return;
       const users = getUsers();
-      users[u].mlData = mlData;
+      users[u].accounts = accounts;
       saveUsers(users);
-      alert('Data ML tersimpan!');
-      loadMLData();
     }
 
+    // ========== FORM TAMBAH/EDIT ==========
+    function showAddForm() {
+      document.getElementById('editId').value = '';
+      document.getElementById('mlEmail').value = '';
+      document.getElementById('mlPassword').value = '';
+      document.getElementById('mlDevice').value = '';
+      document.getElementById('mlNick').value = '';
+      document.getElementById('formTitle').textContent = '➕ Tambah Akun';
+      document.getElementById('editForm').classList.remove('hidden');
+    }
+
+    function editAccount(id) {
+      const accounts = getAccounts();
+      const acc = accounts.find(a => a.id === id);
+      if (!acc) return;
+      document.getElementById('editId').value = id;
+      document.getElementById('mlEmail').value = acc.email || '';
+      document.getElementById('mlPassword').value = acc.password || '';
+      document.getElementById('mlDevice').value = acc.deviceId || '';
+      document.getElementById('mlNick').value = acc.nickname || '';
+      document.getElementById('formTitle').textContent = '✏️ Edit Akun';
+      document.getElementById('editForm').classList.remove('hidden');
+    }
+
+    function cancelEdit() {
+      document.getElementById('editForm').classList.add('hidden');
+    }
+
+    function saveAccount() {
+      const id = document.getElementById('editId').value;
+      const email = document.getElementById('mlEmail').value.trim();
+      const password = document.getElementById('mlPassword').value.trim();
+      const deviceId = document.getElementById('mlDevice').value.trim();
+      const nickname = document.getElementById('mlNick').value.trim();
+
+      if (!email && !password && !deviceId && !nickname) {
+        return alert('Isi minimal satu field!');
+      }
+
+      const accounts = getAccounts();
+      if (id) {
+        // Edit
+        const idx = accounts.findIndex(a => a.id === id);
+        if (idx !== -1) {
+          accounts[idx] = { id, email, password, deviceId, nickname };
+        }
+      } else {
+        // Tambah baru
+        const newId = Date.now().toString(36) + Math.random().toString(36).substr(2);
+        accounts.push({ id: newId, email, password, deviceId, nickname });
+      }
+
+      saveAccounts(accounts);
+      cancelEdit();
+      renderAccounts();
+    }
+
+    function deleteAccount(id) {
+      if (!confirm('Yakin hapus akun ini?')) return;
+      let accounts = getAccounts();
+      accounts = accounts.filter(a => a.id !== id);
+      saveAccounts(accounts);
+      renderAccounts();
+    }
+
+    // ========== RENDER AKUN ==========
     function copyText(text, label) {
       if (!text) return alert(label + ' kosong.');
       if (navigator.clipboard) {
@@ -492,80 +463,87 @@
       }
     }
 
-    window.togglePassword = function(id, iconId) {
-      const el = document.getElementById(id);
-      const icon = document.getElementById(iconId);
-      if (el.type === 'password') {
-        el.type = 'text';
-        if (icon) icon.textContent = '🙈';
-      } else {
-        el.type = 'password';
-        if (icon) icon.textContent = '👁️';
+    function togglePassword(btn) {
+      const card = btn.closest('.account-card');
+      const masked = card.querySelector('.pass-masked');
+      const real = card.querySelector('.pass-real');
+      if (masked && real) {
+        if (real.classList.contains('hidden')) {
+          real.classList.remove('hidden');
+          masked.classList.add('hidden');
+          btn.textContent = '🙈';
+        } else {
+          real.classList.add('hidden');
+          masked.classList.remove('hidden');
+          btn.textContent = '👁️';
+        }
       }
-    };
+    }
 
-    function loadMLData() {
-      const mlData = getMLData();
-      const display = document.getElementById('mlDataDisplay');
+    function renderAccounts() {
+      const accounts = getAccounts();
+      const listEl = document.getElementById('accountList');
       const exportPre = document.getElementById('exportJson');
 
-      if (!mlData || Object.values(mlData).every(v => !v)) {
-        display.innerHTML = '<p class="no-data">Belum ada data.</p>';
-        exportPre.textContent = '{}';
+      if (accounts.length === 0) {
+        listEl.innerHTML = '<p class="no-data">Belum ada akun.</p>';
+        exportPre.textContent = '[]';
         return;
       }
 
-      const escapeJS = (str) => (str || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-      const safeEmail = escapeJS(mlData.email);
-      const safePass = escapeJS(mlData.password);
-      const safeDevice = escapeJS(mlData.deviceId);
-      const safeNick = escapeJS(mlData.nickname);
+      let html = '<div class="account-list">';
+      accounts.forEach(acc => {
+        const safeEmail = (acc.email || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        const safePass = (acc.password || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        const safeDevice = (acc.deviceId || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        const safeNick = (acc.nickname || '').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
-      const passFieldId = 'passField_' + Date.now();
-
-      display.innerHTML = `
-        <div class="data-list">
-          <div class="data-item">
-            <span class="data-label">📧 Email</span>
-            <span class="data-value">${mlData.email || '-'}</span>
-            <div class="action-btns">
-              <button class="copy-btn" onclick="copyText('${safeEmail}', 'Email')">📋</button>
+        html += `
+          <div class="account-card">
+            <div class="account-header">
+              <span class="account-nickname">${acc.nickname || 'Tanpa Nick'}</span>
+              <div class="account-actions">
+                <button class="icon-btn" onclick="editAccount('${acc.id}')">✏️</button>
+                <button class="icon-btn btn-danger" onclick="deleteAccount('${acc.id}')">🗑️</button>
+              </div>
+            </div>
+            <div class="data-grid">
+              <span class="data-label">📧 Email</span>
+              <span class="data-value">${acc.email || '-'}</span>
+              <div class="action-btns">
+                <button class="copy-btn" onclick="copyText('${safeEmail}', 'Email')">📋</button>
+              </div>
+            </div>
+            <div class="data-grid">
+              <span class="data-label">🔑 Pass</span>
+              <div class="data-value">
+                <span class="pass-masked">••••••</span>
+                <span class="pass-real hidden">${acc.password || ''}</span>
+              </div>
+              <div class="action-btns">
+                <button class="toggle-btn" onclick="togglePassword(this)">👁️</button>
+                <button class="copy-btn" onclick="copyText('${safePass}', 'Password')">📋</button>
+              </div>
+            </div>
+            <div class="data-grid">
+              <span class="data-label">🆔 Device</span>
+              <span class="data-value">${acc.deviceId || '-'}</span>
+              <div class="action-btns">
+                <button class="copy-btn" onclick="copyText('${safeDevice}', 'Device ID')">📋</button>
+              </div>
             </div>
           </div>
-          <div class="data-item">
-            <span class="data-label">🔑 Password</span>
-            <div class="data-value">
-              <input type="password" value="${mlData.password || ''}" id="${passFieldId}" readonly />
-            </div>
-            <div class="action-btns">
-              <button class="toggle-btn" onclick="togglePassword('${passFieldId}', 'icon_${passFieldId}')" id="icon_${passFieldId}">👁️</button>
-              <button class="copy-btn" onclick="copyText('${safePass}', 'Password')">📋</button>
-            </div>
-          </div>
-          <div class="data-item">
-            <span class="data-label">🆔 Device ID</span>
-            <span class="data-value">${mlData.deviceId || '-'}</span>
-            <div class="action-btns">
-              <button class="copy-btn" onclick="copyText('${safeDevice}', 'Device ID')">📋</button>
-            </div>
-          </div>
-          <div class="data-item">
-            <span class="data-label">👤 Nickname</span>
-            <span class="data-value">${mlData.nickname || '-'}</span>
-            <div class="action-btns">
-              <button class="copy-btn" onclick="copyText('${safeNick}', 'Nickname')">📋</button>
-            </div>
-          </div>
-        </div>
-      `;
-
-      exportPre.textContent = JSON.stringify(mlData, null, 2);
+        `;
+      });
+      html += '</div>';
+      listEl.innerHTML = html;
+      exportPre.textContent = JSON.stringify(accounts, null, 2);
     }
 
     function exportData() {
-      const mlData = getMLData();
-      if (!mlData) return alert('Tidak ada data.');
-      copyText(JSON.stringify(mlData, null, 2), 'JSON');
+      const accounts = getAccounts();
+      if (accounts.length === 0) return alert('Tidak ada data.');
+      copyText(JSON.stringify(accounts, null, 2), 'Semua akun');
     }
 
     window.onload = function() {
