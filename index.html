@@ -5,110 +5,352 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ML Account Manager</title>
   <style>
-    * { box-sizing: border-box; }
-    body { font-family: system-ui, sans-serif; max-width: 450px; margin: 40px auto; padding: 20px; background: #1a1a2e; color: #eee; }
-    h2 { text-align: center; color: #00d2ff; }
-    input, button { width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; border: none; font-size: 16px; }
-    input { background: #16213e; color: white; border: 1px solid #0f3460; }
-    button { background: #e94560; color: white; font-weight: bold; cursor: pointer; }
-    button.alt { background: #0f3460; }
-    .card { background: #16213e; padding: 20px; border-radius: 16px; margin-top: 20px; }
-    .hidden { display: none; }
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-    .data-row { 
-      display: flex; 
-      justify-content: space-between; 
-      align-items: flex-start; 
-      margin: 12px 0; 
-      padding: 14px; 
-      background: #0f3460; 
-      border-radius: 10px; 
+    body {
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #0d0d2b 0%, #1a0a2e 50%, #0d0d2b 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 480px;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Glass card */
+    .glass {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 24px;
+      padding: 28px 24px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    h2 {
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #00d2ff, #a18cd1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-align: center;
+      margin-bottom: 6px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #888;
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Form inputs */
+    .input-group {
+      margin-bottom: 12px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 14px;
+      color: #fff;
+      font-size: 16px;
+      font-family: inherit;
+      transition: all 0.3s ease;
+      outline: none;
+    }
+
+    input::placeholder {
+      color: rgba(255, 255, 255, 0.35);
+    }
+
+    input:focus {
+      border-color: #00d2ff;
+      box-shadow: 0 0 0 4px rgba(0, 210, 255, 0.1);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    /* Buttons */
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+      color: #fff;
+      box-shadow: 0 6px 20px rgba(0, 210, 255, 0.25);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(0, 210, 255, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    .link-text {
+      text-align: center;
+      color: #aaa;
+      font-size: 14px;
+      margin-top: 16px;
+    }
+
+    .link {
+      color: #00d2ff;
+      text-decoration: none;
+      font-weight: 600;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .link:hover {
+      color: #a18cd1;
+    }
+
+    /* Logout */
+    .logout-row {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 10px;
+    }
+
+    .logout-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 8px 18px;
+      border-radius: 24px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255, 80, 80, 0.2);
+      border-color: rgba(255, 80, 80, 0.4);
+    }
+
+    .welcome {
+      text-align: center;
+      color: #ccc;
+      margin-bottom: 20px;
+      font-size: 15px;
+    }
+
+    .welcome span {
+      color: #00d2ff;
+      font-weight: 700;
+    }
+
+    /* Data rows */
+    .data-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .data-item {
+      display: flex;
       flex-wrap: wrap;
+      align-items: flex-start;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 14px;
+      padding: 14px 16px;
+    }
+
+    .data-label {
+      font-weight: 600;
+      color: #aaa;
+      min-width: 100px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .data-value {
+      flex: 1;
+      color: #eee;
+      word-break: break-all;
+      overflow-wrap: anywhere;
+      line-height: 1.5;
+      font-size: 15px;
+    }
+
+    .copy-btn {
+      background: linear-gradient(135deg, #ffd700, #ffaa00);
+      color: #1a1a2e;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      white-space: nowrap;
+      align-self: center;
+    }
+
+    .copy-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+    }
+
+    pre {
+      background: rgba(0, 0, 0, 0.3);
+      padding: 16px;
+      border-radius: 14px;
+      color: #0f0;
+      font-size: 13px;
+      overflow-x: auto;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: #ddd;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
       gap: 8px;
     }
-    .data-label { font-weight: bold; white-space: nowrap; min-width: 100px; }
-    .data-value { 
-      flex: 1; 
-      word-break: break-all; 
-      overflow-wrap: anywhere; 
-      line-height: 1.5;
-      color: #ddd;
+
+    .no-data {
+      color: #666;
+      font-style: italic;
+      text-align: center;
+      padding: 20px;
     }
-    .copy-btn { 
-      background: #00d2ff; 
-      color: #1a1a2e; 
-      border: none; 
-      padding: 6px 16px; 
-      border-radius: 8px; 
-      font-weight: bold; 
-      cursor: pointer; 
-      font-size: 14px; 
-      white-space: nowrap; 
-    }
-    .logout { text-align: right; margin-bottom: 10px; }
-    a { color: #e94560; text-decoration: none; font-weight: bold; cursor: pointer; }
-    pre { background: #0f3460; padding: 12px; border-radius: 8px; overflow-x: auto; font-size: 14px; }
-    .divider { border-top: 1px solid #0f3460; margin: 15px 0; }
-    .welcome { text-align: center; color: #00d2ff; margin-bottom: 20px; }
   </style>
 </head>
 <body>
+  <div class="container">
+    <!-- HALAMAN LOGIN & REGISTER -->
+    <div id="authPage">
+      <div class="glass">
+        <h2>🔐 ML Manager</h2>
+        <p class="subtitle">Simpan akun Mobile Legends dengan aman</p>
 
-  <!-- HALAMAN LOGIN & REGISTER -->
-  <div id="authPage">
-    <h2>🔐 ML Account Manager</h2>
-    <p style="text-align:center; color:#aaa;">Simpan data akun ML pribadi</p>
-    
-    <div id="loginForm">
-      <h3>Login</h3>
-      <input type="text" id="loginUser" placeholder="Username" autocomplete="username" />
-      <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password" />
-      <button onclick="login()">Masuk</button>
-      <p style="text-align:center;">Belum punya akun? <a onclick="showRegister()">Daftar</a></p>
+        <!-- Login Form -->
+        <div id="loginForm">
+          <div class="input-group">
+            <input type="text" id="loginUser" placeholder="Username" autocomplete="username" />
+          </div>
+          <div class="input-group">
+            <input type="password" id="loginPass" placeholder="Password" autocomplete="current-password" />
+          </div>
+          <button class="btn btn-primary" onclick="login()">Masuk</button>
+          <p class="link-text">Belum punya akun? <span class="link" onclick="showRegister()">Daftar di sini</span></p>
+        </div>
+
+        <!-- Register Form -->
+        <div id="registerForm" class="hidden">
+          <div class="input-group">
+            <input type="text" id="regUser" placeholder="Username" autocomplete="username" />
+          </div>
+          <div class="input-group">
+            <input type="password" id="regPass" placeholder="Password" autocomplete="new-password" />
+          </div>
+          <button class="btn btn-primary" onclick="register()">Buat Akun</button>
+          <p class="link-text">Sudah punya akun? <span class="link" onclick="showLogin()">Login</span></p>
+        </div>
+      </div>
     </div>
 
-    <div id="registerForm" class="hidden">
-      <h3>Daftar</h3>
-      <input type="text" id="regUser" placeholder="Username" autocomplete="username" />
-      <input type="password" id="regPass" placeholder="Password" autocomplete="new-password" />
-      <button onclick="register()">Buat Akun</button>
-      <p style="text-align:center;">Sudah punya akun? <a onclick="showLogin()">Login</a></p>
-    </div>
-  </div>
+    <!-- DASHBOARD -->
+    <div id="dashboard" class="hidden">
+      <div class="logout-row">
+        <button class="logout-btn" onclick="logout()">🚪 Keluar</button>
+      </div>
 
-  <!-- DASHBOARD -->
-  <div id="dashboard" class="hidden">
-    <div class="logout"><a onclick="logout()">🚪 Logout</a></div>
-    <h2>📊 Data ML Kamu</h2>
-    <p class="welcome" id="welcomeText"></p>
+      <div class="glass">
+        <h2>📊 Data Akun ML</h2>
+        <p class="welcome">Selamat datang, <span id="welcomeName"></span>!</p>
 
-    <div class="card">
-      <h4>➕ Tambah / Edit Data ML</h4>
-      <input type="text" id="mlEmail" placeholder="📧 Email ML" />
-      <input type="password" id="mlPassword" placeholder="🔑 Password ML" />
-      <input type="text" id="mlDevice" placeholder="🆔 Device ID" />
-      <input type="text" id="mlNick" placeholder="👤 Nickname" />
-      <button onclick="saveMLData()">💾 Simpan Data</button>
-    </div>
+        <!-- Input Data ML -->
+        <div class="section-title">➕ Tambah / Edit Data</div>
+        <div class="input-group">
+          <input type="text" id="mlEmail" placeholder="📧 Email ML" />
+        </div>
+        <div class="input-group">
+          <input type="password" id="mlPassword" placeholder="🔑 Password ML" />
+        </div>
+        <div class="input-group">
+          <input type="text" id="mlDevice" placeholder="🆔 Device ID" />
+        </div>
+        <div class="input-group">
+          <input type="text" id="mlNick" placeholder="👤 Nickname" />
+        </div>
+        <button class="btn btn-primary" onclick="saveMLData()">💾 Simpan Data</button>
+      </div>
 
-    <div class="card">
-      <h4>📋 Data Tersimpan</h4>
-      <div id="mlDataDisplay">Belum ada data.</div>
-    </div>
+      <!-- Data Tersimpan -->
+      <div class="glass" id="savedDataCard">
+        <div class="section-title">📋 Data Tersimpan</div>
+        <div id="mlDataDisplay"><p class="no-data">Belum ada data.</p></div>
+      </div>
 
-    <div class="card">
-      <h4>📤 Ekspor Data (JSON)</h4>
-      <pre id="exportJson"></pre>
-      <button class="alt" onclick="exportData()">📋 Copy JSON</button>
+      <!-- Ekspor -->
+      <div class="glass">
+        <div class="section-title">📤 Ekspor JSON</div>
+        <pre id="exportJson">{}</pre>
+        <button class="btn btn-secondary" onclick="exportData()">📋 Salin JSON</button>
+      </div>
     </div>
   </div>
 
   <script>
-    // ============= KONFIGURASI =============
     const STORAGE_USERS = 'ml_users_db';
     const STORAGE_SESSION = 'ml_current_user';
 
-    // ============= FUNGSI DASAR =============
     function getUsers() {
       return JSON.parse(localStorage.getItem(STORAGE_USERS)) || {};
     }
@@ -124,7 +366,6 @@
       return h.toString(16);
     }
 
-    // ============= TOGGLE FORM =============
     function showRegister() {
       document.getElementById('loginForm').classList.add('hidden');
       document.getElementById('registerForm').classList.remove('hidden');
@@ -134,7 +375,6 @@
       document.getElementById('loginForm').classList.remove('hidden');
     }
 
-    // ============= AUTH =============
     function register() {
       const u = document.getElementById('regUser').value.trim();
       const p = document.getElementById('regPass').value.trim();
@@ -164,7 +404,6 @@
       document.getElementById('authPage').classList.remove('hidden');
     }
 
-    // ============= DASHBOARD =============
     function getCurrentUser() {
       return localStorage.getItem(STORAGE_SESSION);
     }
@@ -173,7 +412,7 @@
       const u = getCurrentUser();
       document.getElementById('authPage').classList.add('hidden');
       document.getElementById('dashboard').classList.remove('hidden');
-      document.getElementById('welcomeText').textContent = `👋 Selamat datang, ${u}!`;
+      document.getElementById('welcomeName').textContent = u;
       loadMLData();
     }
 
@@ -206,32 +445,33 @@
       const exportPre = document.getElementById('exportJson');
 
       if (!mlData || Object.values(mlData).every(v => !v)) {
-        display.innerHTML = '<p style="color:#aaa;">Belum ada data.</p>';
+        display.innerHTML = '<p class="no-data">Belum ada data.</p>';
         exportPre.textContent = '{}';
         return;
       }
 
-      // Escape aman buat inline onclick
       const escapeJS = (str) => str.replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
       const safeDevice = escapeJS(mlData.deviceId || '');
 
       display.innerHTML = `
-        <div class="data-row">
-          <span class="data-label">📧 Email</span>
-          <span class="data-value">${mlData.email || '-'}</span>
-        </div>
-        <div class="data-row">
-          <span class="data-label">🔑 Password</span>
-          <span class="data-value">${mlData.password || '-'}</span>
-        </div>
-        <div class="data-row">
-          <span class="data-label">🆔 Device ID</span>
-          <span class="data-value">${mlData.deviceId || '-'}</span>
-          <button class="copy-btn" onclick="copyDeviceId('${safeDevice}')">📋 Salin</button>
-        </div>
-        <div class="data-row">
-          <span class="data-label">👤 Nickname</span>
-          <span class="data-value">${mlData.nickname || '-'}</span>
+        <div class="data-list">
+          <div class="data-item">
+            <span class="data-label">📧 Email</span>
+            <span class="data-value">${mlData.email || '-'}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">🔑 Password</span>
+            <span class="data-value">${mlData.password || '-'}</span>
+          </div>
+          <div class="data-item">
+            <span class="data-label">🆔 Device ID</span>
+            <span class="data-value">${mlData.deviceId || '-'}</span>
+            <button class="copy-btn" onclick="copyDeviceId('${safeDevice}')">📋 Salin</button>
+          </div>
+          <div class="data-item">
+            <span class="data-label">👤 Nickname</span>
+            <span class="data-value">${mlData.nickname || '-'}</span>
+          </div>
         </div>
       `;
 
@@ -270,7 +510,6 @@
       }
     }
 
-    // ============= INIT =============
     window.onload = function() {
       if (getCurrentUser()) {
         showDashboard();
