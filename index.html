@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ML Account Manager - Private</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; max-width: 450px; margin: 40px auto; padding: 20px; background: #1a1a2e; color: #eee; }
+    h2 { text-align: center; color: #00d2ff; }
+    input, button { width: 100%; padding: 14px; margin: 8px 0; border-radius: 10px; border: none; font-size: 16px; }
+    input { background: #16213e; color: white; border: 1px solid #0f3460; }
+    button { background: #e94560; color: white; font-weight: bold; cursor: pointer; }
+    button.alt { background: #0f3460; }
+    .card { background: #16213e; padding: 20px; border-radius: 16px; margin-top: 20px; }
+    .hidden { display: none; }
+    .data-row { display: flex; justify-content: space-between; align-items: center; margin: 10px 0; padding: 10px; background: #0f3460; border-radius: 8px; }
+    .data-row span { word-break: break-all; }
+    .logout { text-align: right; }
+    a { color: #e94560; text-decoration: none; font-weight: bold; cursor: pointer; }
+    pre { background: #0f3460; padding: 10px; border-radius: 8px; overflow-x: auto; }
+  </style>
+</head>
+<body>
+
+  <!-- HALAMAN REGISTER & LOGIN -->
+  <div id="authPage">
+    <h2>🔐 ML Manager</h2>
+    <div id="loginForm">
+      <h3>Login</h3>
+      <input type="text" id="loginUser" placeholder="Username" />
+      <input type="password" id="loginPass" placeholder="Password" />
+      <button onclick="login()">Masuk</button>
+      <p style="text-align:center;">Belum punya akun? <a onclick="showRegister()">Register</a></p>
+    </div>
+
+    <div id="registerForm" class="hidden">
+      <h3>Register</h3>
+      <input type="text" id="regUser" placeholder="Username" />
+      <input type="password" id="regPass" placeholder="Password" />
+      <button onclick="register()">Daftar</button>
+      <p style="text-align:center;">Sudah punya akun? <a onclick="showLogin()">Login</a></p>
+    </div>
+  </div>
+
+  <!-- DASHBOARD SETELAH LOGIN -->
+  <div id="dashboard" class="hidden">
+    <div class="logout"><a onclick="logout()">🚪 Logout</a></div>
+    <h2>📊 Data Akun ML</h2>
+    <div class="card">
+      <h4>➕ Tambah/Edit Data ML</h4>
+      <input type="text" id="mlEmail" placeholder="Email ML" />
+      <input type="text" id="mlPassword" placeholder="Password ML" />
+      <input type="text" id="mlDevice" placeholder="Device ID" />
+      <input type="text" id="mlNick" placeholder="Nickname" />
+      <input type="text" id="mlServer" placeholder="Server (contoh: 12345 (1234))" />
+      <button onclick="saveMLData()">💾 Simpan Data ML</button>
+    </div>
+
+    <div class="card" id="savedDataCard">
+      <h4>📋 Data Tersimpan</h4>
+      <div id="mlDataDisplay">Belum ada data.</div>
+    </div>
+
+    <div class="card">
+      <h4>🔍 Ekspor Data (JSON)</h4>
+      <pre id="exportJson"></pre>
+      <button class="alt" onclick="exportData()">📋 Copy JSON</button>
+    </div>
+  </div>
+
+  <script>
+    // ---------- FUNGSI DASAR ----------
+    const MASTER_KEY = "ml_manager_users"; // penyimpanan user
+    const SESSION_KEY = "ml_current_session"; // user yang login
+
+    // Ambil database user dari localStorage
+    function getUsers() {
+      return JSON.parse(localStorage.getItem(MASTER_KEY)) || {};
+    }
+
+    function saveUsers(users) {
+      localStorage.setItem(MASTER_KEY, JSON.stringify(users));
+    }
+
+    // Simulasi hashing sederhana (jangan dipakai production!)
+    function simpleHash(str) {
+      let hash = 0;
+      for (let i = 0; i < str.length; i++) {
+        hash = ((hash << 5) - hash) + str.charCodeAt(i);
+        hash |= 0;
+      }
+      return hash.toString(16);
+    }
+
+    // ---------- UI TOGGLE ----------
+    function showRegister() {
+      document.getElementById('loginForm').classList.add('hidden');
+      document.getElementById('registerForm').classList.remove('hidden');
+    }
+
+    function showLogin() {
+      document.getElementById('registerForm').classList.add('hidden');
+      document.getElementById('loginForm').classList.remove('hidden');
+    }
+
+    // ---------- AUTH ----------
+    function register() {
+      const username = document.getElementById('regUser').value.trim();
+      const password = document.getElementById('regPass').value.trim();
+      if (!username || !password) return alert('Isi username & password!');
+
+      const users = getUsers();
+      if (users[username]) return alert('Username sudah terpakai!');
+
+      users[username] = {
+        passwordHash: simpleHash(password),
+        mlData: null // nanti diisi setelah login
+      };
+      saveUsers(users);
+      alert('Registrasi berhasil! Silakan login.');
+      showLogin();
+    }
+
+    function login() {
+      const username = document.getElementById('loginUser').value.trim();
+      const password = document.getElementById('loginPass').value.trim();
+      if (!username || !password) return alert('Isi username & password!');
+
+      const users = getUsers();
+      const user = users[username];
+      if (!user || user.passwordHash !== simpleHash(password)) {
+        return alert('Username atau password salah!');
+      }
+
+      // Simpan sesi login
+      localStorage.setItem(SESSION_KEY, username);
+      document.getElementById('authPage').classList.add('hidden');
+      document.getElementById('dashboard').classList.remove('hidden');
+      loadMLData(); // tampilkan data ML jika ada
+    }
+
+    function logout() {
+      localStorage.removeItem(SESSION_KEY);
+      document.getElementById('authPage').classList.remove('hidden');
+      document.getElementById('dashboard').classList.add('hidden');
+    }
+
+    // ---------- DATA ML (per user) ----------
+    function getCurrentUser() {
+      return localStorage.getItem(SESSION_KEY);
+    }
+
+    function getMLData() {
+      const username = getCurrentUser();
+      if (!username) return null;
+      const users = getUsers();
+      return users[username]?.mlData || null;
+    }
+
+    function saveMLData() {
+      const username = getCurrentUser();
+      if (!username) return alert('Session invalid, login ulang.');
+
+      const mlData = {
+        email: document.getElementById('mlEmail').value.trim(),
+        password: document.getElementById('mlPassword').value.trim(),
+        deviceId: document.getElementById('mlDevice').value.trim(),
+        nickname: document.getElementById('mlNick').value.trim(),
+        server: document.getElementById('mlServer').value.trim()
+      };
+
+      const users = getUsers();
+      users[username].mlData = mlData;
+      saveUsers(users);
+      alert('Data ML berhasil disimpan!');
+      loadMLData(); // refresh tampilan
+    }
+
+    function loadMLData() {
+      const mlData = getMLData();
+      const displayDiv = document.getElementById('mlDataDisplay');
+      const exportPre = document.getElementById('exportJson');
+
+      if (!mlData || Object.values(mlData).every(v => !v)) {
+        displayDiv.innerHTML = 'Belum ada data.';
+        exportPre.textContent = '{}';
+        return;
+      }
+
+      // Tampilkan di card
+      displayDiv.innerHTML = `
+        <div class="data-row"><span>📧 Email</span> <span>${mlData.email || '-'}</span></div>
+        <div class="data-row"><span>🔑 Password</span> <span>${mlData.password || '-'}</span></div>
+        <div class="data-row"><span>🆔 Device ID</span> <span>${mlData.deviceId || '-'}</span></div>
+        <div class="data-row"><span>👤 Nickname</span> <span>${mlData.nickname || '-'}</span></div>
+        <div class="data-row"><span>🌐 Server</span> <span>${mlData.server || '-'}</span></div>
+      `;
+
+      // JSON export
+      exportPre.textContent = JSON.stringify(mlData, null, 2);
+    }
+
+    function exportData() {
+      const mlData = getMLData();
+      if (!mlData) return alert('Tidak ada data untuk diexport.');
+      navigator.clipboard.writeText(JSON.stringify(mlData, null, 2))
+        .then(() => alert('JSON tercopy ke clipboard!'))
+        .catch(() => alert('Gagal copy, coba manual.'));
+    }
+
+    // ---------- CEK SESI SAAT LOAD ----------
+    window.onload = function() {
+      const currentUser = getCurrentUser();
+      if (currentUser) {
+        document.getElementById('authPage').classList.add('hidden');
+        document.getElementById('dashboard').classList.remove('hidden');
+        loadMLData();
+      } else {
+        document.getElementById('authPage').classList.remove('hidden');
+        document.getElementById('dashboard').classList.add('hidden');
+      }
+    };
+  </script>
+</body>
+</html>
