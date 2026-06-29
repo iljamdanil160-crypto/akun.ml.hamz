@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ML Account Manager</title>
+  <!-- Cropper.js CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.css">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -60,6 +62,27 @@
     .photo-preview { text-align: center; margin-bottom: 10px; }
     .photo-preview img { width: 70px; height: 70px; border-radius: 14px; object-fit: cover; border: 2px solid #00d2ff; }
     .file-label { display: block; text-align: center; color: #aaa; cursor: pointer; padding: 10px; background: rgba(255,255,255,0.04); border-radius: 12px; margin-bottom: 10px; }
+    /* Modal Crop */
+    .modal {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.8);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: #1e1e2f;
+      border-radius: 20px;
+      padding: 20px;
+      max-width: 90%;
+      max-height: 90%;
+      width: 400px;
+    }
+    .modal-content img { max-width: 100%; display: block; }
+    .crop-actions { display: flex; gap: 10px; margin-top: 15px; }
+    .crop-actions button { flex: 1; }
   </style>
 </head>
 <body>
@@ -119,6 +142,20 @@
   </div>
 </div>
 
+<!-- Modal Crop -->
+<div id="cropModal" class="modal hidden">
+  <div class="modal-content">
+    <div class="section-title" style="margin-bottom:10px;">✂️ Crop 1:1</div>
+    <img id="cropImage" src="" alt="Crop">
+    <div class="crop-actions">
+      <button class="btn-primary" id="cropSubmitBtn">✅ Crop & Simpan</button>
+      <button class="btn-secondary" id="cropCancelBtn">Batal</button>
+    </div>
+  </div>
+</div>
+
+<!-- Cropper.js JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.1/cropper.min.js"></script>
 <script>
 (function() {
   // ========== STORAGE ==========
@@ -129,29 +166,19 @@
     try { return JSON.parse(localStorage.getItem(STORAGE_USERS)) || {}; }
     catch(e) { return {}; }
   }
-  function saveUsers(users) {
-    localStorage.setItem(STORAGE_USERS, JSON.stringify(users));
-  }
+  function saveUsers(users) { localStorage.setItem(STORAGE_USERS, JSON.stringify(users)); }
   function simpleHash(str) {
     let h = 0;
-    for (let i = 0; i < str.length; i++) {
-      h = ((h << 5) - h) + str.charCodeAt(i);
-      h |= 0;
-    }
+    for (let i = 0; i < str.length; i++) { h = ((h << 5) - h) + str.charCodeAt(i); h |= 0; }
     return h.toString(16);
   }
-
-  function getCurrentUser() {
-    return localStorage.getItem(STORAGE_SESSION);
-  }
-
+  function getCurrentUser() { return localStorage.getItem(STORAGE_SESSION); }
   function getAccounts() {
     const u = getCurrentUser();
     if (!u) return [];
     const users = getUsers();
     return users[u]?.accounts || [];
   }
-
   function saveAccounts(accounts) {
     const u = getCurrentUser();
     if (!u) return;
@@ -186,10 +213,18 @@
   const exportJson = document.getElementById('exportJson');
   const exportBtn = document.getElementById('exportBtn');
 
-  let editingId = null;
-  let currentPhotoData = '';
+  // Crop elements
+  const cropModal = document.getElementById('cropModal');
+  const cropImage = document.getElementById('cropImage');
+  const cropSubmitBtn = document.getElementById('cropSubmitBtn');
+  const cropCancelBtn = document.getElementById('cropCancelBtn');
+  let cropper = null;
+  let cropCallback = null; // dipanggil setelah crop
 
   const DEFAULT_PHOTO = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2270%22 height=%2270%22%3E%3Crect width=%2270%22 height=%2270%22 fill=%22%231a1a2e%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 dominant-baseline=%22middle%22 text-anchor=%22middle%22 fill=%22%23aaa%22 font-size=%2232%22%3E📷%3C/text%3E%3C/svg%3E';
+
+  let editingId = null;
+  let currentPhotoData = '';
 
   function resetPhoto() {
     currentPhotoData = '';
@@ -198,14 +233,8 @@
   }
 
   // ========== AUTH ==========
-  showRegisterLink.onclick = () => {
-    loginForm.classList.add('hidden');
-    registerForm.classList.remove('hidden');
-  };
-  showLoginLink.onclick = () => {
-    registerForm.classList.add('hidden');
-    loginForm.classList.remove('hidden');
-  };
+  showRegisterLink.onclick = () => { loginForm.classList.add('hidden'); registerForm.classList.remove('hidden'); };
+  showLoginLink.onclick = () => { registerForm.classList.add('hidden'); loginForm.classList.remove('hidden'); };
 
   registerBtn.onclick = () => {
     const u = document.getElementById('regUser').value.trim();
@@ -226,10 +255,7 @@
     if (!u || !p) { alert('Isi username & password!'); return; }
     const users = getUsers();
     const user = users[u];
-    if (!user || user.passHash !== simpleHash(p)) {
-      alert('Username atau password salah!');
-      return;
-    }
+    if (!user || user.passHash !== simpleHash(p)) { alert('Username atau password salah!'); return; }
     localStorage.setItem(STORAGE_SESSION, u);
     showDashboard();
   };
@@ -242,8 +268,7 @@
 
   // ========== DASHBOARD ==========
   function showDashboard() {
-    const u = getCurrentUser();
-    welcomeName.textContent = u;
+    welcomeName.textContent = getCurrentUser();
     authPage.classList.add('hidden');
     dashboard.classList.remove('hidden');
     editForm.classList.add('hidden');
@@ -261,21 +286,56 @@
     editForm.classList.remove('hidden');
   };
 
-  cancelEditBtn.onclick = () => {
-    editForm.classList.add('hidden');
+  cancelEditBtn.onclick = () => { editForm.classList.add('hidden'); };
+
+  // ========== CROP LOGIC ==========
+  function openCropModal(imageSrc, onCrop) {
+    cropImage.src = imageSrc;
+    cropCallback = onCrop;
+    cropModal.classList.remove('hidden');
+    if (cropper) cropper.destroy();
+    cropper = new Cropper(cropImage, {
+      aspectRatio: 1,
+      viewMode: 2,
+      autoCropArea: 1,
+      background: false,
+    });
+  }
+
+  function closeCropModal() {
+    cropModal.classList.add('hidden');
+    if (cropper) { cropper.destroy(); cropper = null; }
+    cropCallback = null;
+  }
+
+  cropSubmitBtn.onclick = () => {
+    if (!cropper) return;
+    const canvas = cropper.getCroppedCanvas({ width: 300, height: 300 });
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+    if (cropCallback) cropCallback(dataUrl);
+    closeCropModal();
   };
 
+  cropCancelBtn.onclick = () => {
+    closeCropModal();
+  };
+
+  // Ketika file dipilih, buka crop modal
   mlPhotoInput.onchange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (ev) => {
-      currentPhotoData = ev.target.result;
-      previewImg.src = currentPhotoData;
+      openCropModal(ev.target.result, (croppedData) => {
+        currentPhotoData = croppedData;
+        previewImg.src = croppedData;
+      });
     };
     reader.readAsDataURL(file);
+    mlPhotoInput.value = ''; // reset input file
   };
 
+  // ========== SAVE ==========
   saveAccountBtn.onclick = () => {
     const email = mlEmail.value.trim();
     const password = mlPassword.value.trim();
@@ -291,14 +351,11 @@
     const accounts = getAccounts();
     if (editingId) {
       const idx = accounts.findIndex(a => a.id === editingId);
-      if (idx !== -1) {
-        accounts[idx] = { id: editingId, email, password, deviceId, nickname, photo };
-      }
+      if (idx !== -1) accounts[idx] = { id: editingId, email, password, deviceId, nickname, photo };
     } else {
       const newId = Date.now().toString(36) + Math.random().toString(36).substring(2);
       accounts.push({ id: newId, email, password, deviceId, nickname, photo });
     }
-
     saveAccounts(accounts);
     editForm.classList.add('hidden');
     renderAccounts();
@@ -307,8 +364,7 @@
   // ========== RENDER ==========
   function copyText(text, label) {
     if (!text) { alert(label + ' kosong.'); return; }
-    navigator.clipboard.writeText(text).then(() => alert('✅ ' + label + ' disalin!'))
-      .catch(() => alert('Gagal menyalin.'));
+    navigator.clipboard.writeText(text).then(() => alert('✅ ' + label + ' disalin!')).catch(() => alert('Gagal menyalin.'));
   }
 
   function renderAccounts() {
@@ -323,7 +379,6 @@
     accounts.forEach((acc, idx) => {
       const order = idx + 1;
       const photoSrc = acc.photo || DEFAULT_PHOTO;
-      // Simpan data di dataset untuk dipakai tombol
       html += `
         <div class="account-card" data-id="${acc.id}">
           <img class="account-photo" src="${photoSrc}" alt="Foto" onerror="this.src='${DEFAULT_PHOTO.replace(/'/g, "\\'")}'">
@@ -359,7 +414,7 @@
     html += '</div>';
     accountList.innerHTML = html;
 
-    // Event delegation untuk semua tombol di daftar akun
+    // Event delegation
     accountList.querySelectorAll('.account-card').forEach(card => {
       const id = card.dataset.id;
       const acc = accounts.find(a => a.id === id);
@@ -372,12 +427,8 @@
         mlPassword.value = acc.password || '';
         mlDevice.value = acc.deviceId || '';
         mlNick.value = acc.nickname || '';
-        if (acc.photo) {
-          currentPhotoData = acc.photo;
-          previewImg.src = acc.photo;
-        } else {
-          resetPhoto();
-        }
+        if (acc.photo) { currentPhotoData = acc.photo; previewImg.src = acc.photo; }
+        else { resetPhoto(); }
         mlPhotoInput.value = '';
         editForm.classList.remove('hidden');
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -426,12 +477,8 @@
   };
 
   // ========== INIT ==========
-  if (getCurrentUser()) {
-    showDashboard();
-  } else {
-    authPage.classList.remove('hidden');
-    dashboard.classList.add('hidden');
-  }
+  if (getCurrentUser()) showDashboard();
+  else { authPage.classList.remove('hidden'); dashboard.classList.add('hidden'); }
 })();
 </script>
 </body>
